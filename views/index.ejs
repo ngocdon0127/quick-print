@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title><%= title %></title>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+	<script src="/javascripts/FileSaver.min.js" type="text/javascript"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  </head>
+  <body>
+	<h1><%= title %></h1>
+	<p>Welcome to <%= title %></p>
+	<form action="/" method="post" >
+		<input type="file" multiple name="attachments" id="attachments" />
+		<input type="button" onclick="send()" value="Send" id="btnSend">
+	</form>
+	<script>
+		var ew = undefined;
+		function send(event) {
+			var files = document.getElementById('attachments').files;
+			if (typeof(Worker) !== 'undefined'){
+				if (typeof(ew) == 'undefined'){
+					ew = new Worker('/javascripts/file-worker.js');
+					ew.postMessage({
+						type: 'upload',
+						files: files
+					});
+					console.log('sent');
+				}
+				ew.onmessage = function (event) {
+					console.log('event');
+					var files = event.data.files;
+					ew.terminate();
+					ew = undefined;
+					console.log(files);
+				}
+			}
+			else{
+				alert('This browser does not support web worker.');
+			}
+		}
+		// $.ajax({
+		// 	url: '/download',
+		// 	method: 'GET',
+		// 	success: function (data) {
+		// 		// console.log(data.data);
+		// 		data = data.data.data;
+		// 		console.log(data);
+		// 		var b = new Blob(data, {type: 'image/png'});
+		// 		console.log(b);
+		// 		saveAs(b, 'hehe.png');
+		// 	},
+		// 	error: function (err) {
+		// 		console.log(err);
+		// 	}
+		// })
+	</script>
+  </body>
+</html>
