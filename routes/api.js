@@ -6,6 +6,7 @@ var Print = mongoose.model('Print');
 var bcrypt = require('bcrypt-nodejs');
 var CryptoJS = require('crypto-js');
 var request = require('request');
+var path = require('path');
 
 var STR_SEPERATOR = require('../config/consts.js').STR_SEPERATOR;
 
@@ -41,10 +42,11 @@ router.get('/download/:id', function (req, res, next) {
 	Print.findById(req.params.id, function (err, print) {
 		if (err){
 			return res.status(500).json({
-				status: 'error'
+				status: 'error',
+				error: 'Invalid id'
 			})
 		}
-		var data = fs.readFileSync(__dirname + '/../public/uploads/' + print.fileOnServer).toString().split(STR_SEPERATOR);
+		var data = fs.readFileSync(path.join('public/uploads', print.fileOnServer)).toString().split(STR_SEPERATOR);
 		var filenames = print.originalFileNames;
 		var files = [];
 		for (var i = 0; i < filenames.length; i++) {

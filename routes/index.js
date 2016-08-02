@@ -6,6 +6,7 @@ var Print = mongoose.model('Print');
 var bcrypt = require('bcrypt-nodejs');
 var CryptoJS = require('crypto-js');
 var request = require('request');
+var path = require('path');
 
 var STR_SEPERATOR = require('../config/consts.js').STR_SEPERATOR;
 
@@ -25,7 +26,7 @@ router.post('/',  function (req, res, next) {
 		originalFileNames.push(file.filename);
 	};
 	data.substring(0, data.length - STR_SEPERATOR.length);
-	fs.writeFileSync(__dirname + '/../public/uploads/' + serverFileName, data);
+	fs.writeFileSync(path.join('public/uploads', serverFileName), data);
 	var newPrint = new Print();
 	newPrint.title = req.body.title;
 	newPrint.originalFileNames = originalFileNames;
@@ -48,6 +49,10 @@ router.post('/',  function (req, res, next) {
 
 router.get('/recent', function (req, res, next) {
 	res.render('download', {id: 'recent', url: 'http://' + req.headers.host + '/api/recent'});
+})
+
+router.get('/download/:id', function (req, res, next) {
+	res.render('download', {id: req.params.id, url: 'http://' + req.headers.host + '/api/download/' + req.params.id});
 })
 
 module.exports = router;
