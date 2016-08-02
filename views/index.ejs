@@ -10,10 +10,14 @@
 	<h1><%= title %></h1>
 	<p>Welcome to <%= title %></p>
 	<form action="/" method="post" >
+		<input type="text" name="title" id="title" />
 		<input type="file" multiple name="attachments" id="attachments" />
 		<input type="button" onclick="send()" value="Send" id="btnSend">
 	</form>
 	<script>
+		function ob (x) {
+			return document.getElementById(x);
+		}
 		var ew = undefined;
 		function send(event) {
 			var files = document.getElementById('attachments').files;
@@ -32,27 +36,29 @@
 					ew.terminate();
 					ew = undefined;
 					console.log(files);
+					$.ajax({
+						url: '/',
+						method: 'POST',
+						data: {
+							files: JSON.stringify(files),
+							title: ob('title').value
+						},
+						success: function (data) {
+							console.log(data);
+							if (data.status == 'success'){
+								alert('OK');
+							}
+						},
+						error: function (err) {
+							console.log(err);
+						}
+					})
 				}
 			}
 			else{
 				alert('This browser does not support web worker.');
 			}
 		}
-		// $.ajax({
-		// 	url: '/download',
-		// 	method: 'GET',
-		// 	success: function (data) {
-		// 		// console.log(data.data);
-		// 		data = data.data.data;
-		// 		console.log(data);
-		// 		var b = new Blob(data, {type: 'image/png'});
-		// 		console.log(b);
-		// 		saveAs(b, 'hehe.png');
-		// 	},
-		// 	error: function (err) {
-		// 		console.log(err);
-		// 	}
-		// })
 	</script>
   </body>
 </html>

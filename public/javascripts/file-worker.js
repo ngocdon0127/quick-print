@@ -17,10 +17,7 @@ onmessage = function (msg) {
 			files: result
 		});
 	}
-	else if (msg.data.type = 'decrypt'){
-		var key = msg.data.key;
-		var file = msg.data.file;
-		var reader = new FileReaderSync();
+	else if (msg.data.type = 'download'){
 		var data = reader.readAsText(file);
 		var ciphers = data.split('?')[1];
 		var filenames = data.split('?')[0];

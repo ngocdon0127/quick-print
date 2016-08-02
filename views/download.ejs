@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+	<script src="/javascripts/FileSaver.min.js" type="text/javascript"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  </head>
+  <body>
+	<script>
+		/**
+		 * dataURLToBlob => get from https://github.com/ebidel/filer.js/blob/master/src/filer.js#L137
+		 *
+		 * @param {string} dataURL Raw data display in string
+		 * @return {object} Blob
+		 */
+		var dataURLToBlob = function(dataURL) {
+			var BASE64_MARKER = ';base64,';
+			if (dataURL.indexOf(BASE64_MARKER) == -1) {
+				var parts = dataURL.split(',');
+				var contentType = parts[0].split(':')[1];
+				var raw = decodeURIComponent(parts[1]);
+
+				return new Blob([raw], {type: contentType});
+			}
+
+			var parts = dataURL.split(BASE64_MARKER);
+			var contentType = parts[0].split(':')[1];
+			var raw = window.atob(parts[1]);
+			var rawLength = raw.length;
+
+			var uInt8Array = new Uint8Array(rawLength);
+
+			for (var i = 0; i < rawLength; ++i) {
+				uInt8Array[i] = raw.charCodeAt(i);
+			}
+
+			return new Blob([uInt8Array], {type: contentType});
+		}
+	</script>
+	<script>
+		var id = "<%= id %>";
+		var url = "<%= url %>";
+		var dw = undefined;
+		$.ajax({
+			url: url,
+			method: 'GET',
+			success: function (data) {
+				console.log(data);
+				if (data.status == 'success'){
+					var files = data.files;
+					for (var i = 0; i < files.length; i++) {
+						var file = files[i];
+						var blob = undefined;
+						var dataURL = file.dataURL;
+						var filename = file.filename;
+						try{
+							blob = dataURLToBlob(dataURL);
+							saveAs(blob, filename);
+							// removeAnimation(0);
+						}
+						catch (e){
+							console.log(e);
+						}
+					}
+					dw.terminate();
+					dw = undefined;
+					// removeAnimation(0);
+				}
+			},
+			error: function (err) {
+				console.log(err);
+			}
+		})
+	</script>
+  </body>
+</html>
