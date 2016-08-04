@@ -55,4 +55,24 @@ router.get('/download/:id', function (req, res, next) {
 	res.render('download', {id: req.params.id, url: 'http://' + req.headers.host + '/api/download/' + req.params.id});
 })
 
+router.get('/all', function (req, res, next) {
+	Print.find({}, null, {sort: {created_at: -1}}, function (err, prints) {
+		if (err){
+			return res.status(400).json({
+				status: 'error',
+				error: 'Error while reading database'
+			})
+		}
+		var results = [];
+		for (var i = 0; i < prints.length; i++) {
+			var print = prints[i];
+			var r = JSON.parse(JSON.stringify(print));
+			delete r.fileOnServer;
+			delete r.__v;
+			results.push(r);
+		}
+		res.render('all', {prints: results});
+	})
+})
+
 module.exports = router;

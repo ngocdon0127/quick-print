@@ -6,7 +6,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 	</head>
 	<body>
-	<h2 id="total"></h2>
+	<h2 id="total">Receiving data...</h2>
 	<script>
 		function ob (x) {
 			return document.getElementById(x);
@@ -48,7 +48,7 @@
 			url: url,
 			method: 'GET',
 			success: function (data) {
-				console.log(data);
+				// console.log(data);
 				if (data.status == 'success'){
 					var files = data.files;
 					ob('total').innerHTML = 'Total: ' + files.length;

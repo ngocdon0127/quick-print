@@ -46,7 +46,15 @@ router.get('/download/:id', function (req, res, next) {
 				error: 'Invalid id'
 			})
 		}
-		var data = fs.readFileSync(path.join('public/uploads', print.fileOnServer)).toString().split(STR_SEPERATOR);
+		try {
+			var data = fs.readFileSync(path.join('public/uploads', print.fileOnServer)).toString().split(STR_SEPERATOR);
+		}
+		catch (e){
+			return res.status(400).json({
+				status: 'error',
+				error: 'File not found'
+			})
+		}
 		var filenames = print.originalFileNames;
 		var files = [];
 		for (var i = 0; i < filenames.length; i++) {
@@ -58,5 +66,31 @@ router.get('/download/:id', function (req, res, next) {
 		})
 	})
 })
+
+// router.get('/all', function (req, res, next) {
+// 	Print.find({}, null, {sort: {created_at: -1}}, function (err, prints) {
+// 		if (err){
+// 			return res.status(400).json({
+// 				status: 'error',
+// 				error: 'Error while reading database'
+// 			})
+// 		}
+// 		var results = [];
+// 		for (var i = 0; i < prints.length; i++) {
+// 			var print = prints[i];
+// 			var r = JSON.parse(JSON.stringify(print));
+// 			delete r.fileOnServer;
+// 			delete r.__v;
+// 			results.push(r);
+// 		}
+// 		results.sort(function (a, b) {
+// 			return -(new Date(a.created_at)).getTime() + (new Date(b.created_at)).getTime();
+// 		})
+// 		return res.status(200).json({
+// 			status: 'success',
+// 			prints: results
+// 		})
+// 	})
+// })
 
 module.exports = router;
