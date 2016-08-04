@@ -4,9 +4,12 @@
 	<link rel='stylesheet' href='/stylesheets/style.css' />
 	<script src="/javascripts/FileSaver.min.js" type="text/javascript"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 	</head>
 	<body>
 	<h2 id="total">Receiving data...</h2>
+	<ul class="list-group" id="fn"></ul>
 	<script>
 		function ob (x) {
 			return document.getElementById(x);
@@ -57,6 +60,10 @@
 						var blob = undefined;
 						var dataURL = file.dataURL;
 						var filename = file.filename;
+						var li = document.createElement('li');
+						li.setAttribute('class', 'list-group-item');
+						li.innerHTML = (i + 1) + ' . ' + filename;
+						ob('fn').appendChild(li);
 						try{
 							blob = dataURLToBlob(dataURL);
 							saveAs(blob, filename);
